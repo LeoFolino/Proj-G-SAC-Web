@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #221551;
+    color: white;
+    padding: 20px;
+}
+
+h1 {
+    color: #E0004D;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    max-width: 800px; /* Incrementado para más espacio */
+}
+
+.status-container {
+    max-width: 600px; /* Incrementado para más espacio */
+    text-align: right;
+    white-space: nowrap;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #E0004D;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #D00042;
+}
+
+#results {
+    white-space: pre-wrap;
+    background-color: #2d1b69; /* Tono morado claro */
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2d1b69; /* Tono morado claro */
+}
+
+#results-table th, #results-table td {
+    border: 1px solid #555;
+    padding: 8px;
+    text-align: left;
+}
+
+#results-table th {
+    background-color: #444;
+}
+
+#results-table tbody tr:nth-child(even) {
+    background-color: #3a2676; /* Tono ligeramente más oscuro */
+}
+
+#results-table tbody tr:hover {
+    background-color: #555;
+}
+
+.selected {
+    background-color: magenta !important;
+}
+
+.status-container h2 {
+    font-size: 24px;
+    margin: 0;
+    display: inline;
+}
+
+.status-container #estado-transaccion {
+    font-size: 24px;
+    margin-left: 10px;
+    display: inline;
+    white-space: nowrap;
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Buscador de Transacciones</title>
+</head>
+<body>
+    <h1>Buscador de Transacciones</h1>
+    <div class="container">
+        <div class="form-container">
+            <form id="search-form">
+                <label for="codigo_tienda">Sucursal:</label>
+                <input type="text" id="codigo_tienda" name="codigo_tienda" class="search-input"><br>
+
+                <label for="tid">Puesto:</label>
+                <input type="text" id="tid" name="tid" class="search-input"><br>
+
+                <label for="tarjeta">Tarjeta:</label>
+                <input type="text" id="tarjeta" name="tarjeta" class="search-input"><br>
+
+                <label for="monto_desde">Monto Desde:</label>
+                <input type="text" id="monto_desde" name="monto_desde" class="search-input"><br>
+
+                <label for="monto_hasta">Monto Hasta:</label>
+                <input type="text" id="monto_hasta" name="monto_hasta" class="search-input"><br>
+
+                <label for="fecha_desde">Fecha Desde (DD/MM/AAAA):</label>
+                <input type="text" id="fecha_desde" name="fecha_desde" class="search-input" maxlength="10" oninput="formatearFecha(this)"><br>
+
+                <label for="fecha_hasta">Fecha Hasta (DD/MM/AAAA):</label>
+                <input type="text" id="fecha_hasta" name="fecha_hasta" class="search-input" maxlength="10" oninput="formatearFecha(this)"><br>
+
+                <button type="button" onclick="buscar()">Buscar</button>
+            </form>
+        </div>
+        <div class="status-container">
+            <h2>ESTADO DE TRANSACCION: <span id="estado-transaccion">-</span></h2>
+        </div>
+    </div>
+    <div id="results">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>FECHA</th>
+                    <th>TARJETA</th>
+                    <th>TID</th>
+                    <th>NSU_HOST</th>
+                    <th>MONTO</th>
+                    <th>MONTO_RETIRO</th>
+                    <th>AUTORIZACION</th>
+                    <th>COMERCIO</th>
+                    <th>DESCRIPCION_TRANSACCION</th>
+                    <th>ESTADO_TRANSACCION</th>
+                    <th>COMPROBANTE_FISCAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los resultados de la búsqueda se insertarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let selectedRow = null;
+        let fullData = {};
+
+        function buscar() {
+            const data = {
+                codigo_tienda: document.getElementById('codigo_tienda').value,
+                tid: document.getElementById('tid').value,
+                tarjeta: document.getElementById('tarjeta').value,
+                monto_desde: document.getElementById('monto_desde').value,
+                monto_hasta: document.getElementById('monto_hasta').value,
+                fecha_desde: document.getElementById('fecha_desde').value,
+                fecha_hasta: document.getElementById('fecha_hasta').value
+            };
+
+            fetch('/buscar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(resultados => {
+                let resultadosTable = document.getElementById('results-table').getElementsByTagName('tbody')[0];
+                resultadosTable.innerHTML = ''; // Clear previous results
+                
+                resultados.forEach((result, index) => {
+                    let row = resultadosTable.insertRow();
+                    row.insertCell(0).innerText = result.FECHA || '';
+                    row.insertCell(1).innerText = result.TARJETA || '';
+                    row.insertCell(2).innerText = result.TID || '';
+                    row.insertCell(3).innerText = result.NSU_HOST || '';
+                    row.insertCell(4).innerText = result.MONTO || '';
+                    row.insertCell(5).innerText = result.MONTO_RETIRO || '';
+                    row.insertCell(6).innerText = result.AUTORIZACION || '';
+                    row.insertCell(7).innerText = result.COMERCIO || '';
+                    row.insertCell(8).innerText = result.DESCRIPCION_TRANSACCION || '';
+                    row.insertCell(9).innerText = result.ESTADO_TRANSACCION || '';
+                    row.insertCell(10).innerText = result.COMPROBANTE_FISCAL || '';
+
+                    row.onclick = () => selectRow(row, result);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function selectRow(row, data) {
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+            }
+            selectedRow = row;
+            row.classList.add('selected');
+
+            // Guardar los datos de la fila seleccionada
+            fullData = data;
+
+            // Actualizar el estado de la transacción
+            document.getElementById('estado-transaccion').innerText = data.ESTADO_TRANSACCION || '-';
+        }
+
+        function moveSelection(direction) {
+            const rows = document.querySelectorAll('#results-table tbody tr');
+            if (rows.length === 0) return;
+            
+            let newIndex;
+            if (selectedRow) {
+                const currentIndex = Array.from(rows).indexOf(selectedRow);
+                newIndex = currentIndex + direction;
+                if (newIndex < 0 || newIndex >= rows.length) return;
+                const newData = {
+                    FECHA: rows[newIndex].cells[0].innerText,
+                    TARJETA: rows[newIndex].cells[1].innerText,
+                    TID: rows[newIndex].cells[2].innerText,
+                    NSU_HOST: rows[newIndex].cells[3].innerText,
+                    MONTO: rows[newIndex].cells[4].innerText,
+                    MONTO_RETIRO: rows[newIndex].cells[5].innerText,
+                    AUTORIZACION: rows[newIndex].cells[6].innerText,
+                    COMERCIO: rows[newIndex].cells[7].innerText,
+                    DESCRIPCION_TRANSACCION: rows[newIndex].cells[8].innerText,
+                    ESTADO_TRANSACCION: rows[newIndex].cells[9].innerText,
+                    COMPROBANTE_FISCAL: rows[newIndex].cells[10].innerText,
+                };
+                selectRow(rows[newIndex], newData);
+            } else {
+                newIndex = direction > 0 ? 0 : rows.length - 1;
+                const newData = {
+                    FECHA: rows[newIndex].cells[0].innerText,
+                    TARJETA: rows[newIndex].cells[1].innerText,
+                    TID: rows[newIndex].cells[2].innerText,
+                    NSU_HOST: rows[newIndex].cells[3].innerText,
+                    MONTO: rows[newIndex].cells[4].innerText,
+                    MONTO_RETIRO: rows[newIndex].cells[5].innerText,
+                    AUTORIZACION: rows[newIndex].cells[6].innerText,
+                    COMERCIO: rows[newIndex].cells[7].innerText,
+                    DESCRIPCION_TRANSACCION: rows[newIndex].cells[8].innerText,
+                    ESTADO_TRANSACCION: rows[newIndex].cells[9].innerText,
+                    COMPROBANTE_FISCAL: rows[newIndex].cells[10].innerText,
+                };
+                selectRow(rows[newIndex], newData);
+            }
+        }
+
+        function formatearFecha(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '/' + value.slice(5);
+            }
+            input.value = value.slice(0, 10);
+
+            // Ajustar la posición del cursor
+            const len = input.value.length;
+            if (len === 2 || len === 5) {
+                input.setSelectionRange(len + 1, len + 1);
+            } else {
+                input.setSelectionRange(len, len);
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'c' && fullData) {
+                const columnOrder = ["FECHA", "CODIGO_TIENDA", "TARJETA", "TID", "NSU", "NSU_HOST", "MONTO", "MONTO_PROPINA", "MONTO_RETIRO", "RED", "TIPO_PRODUCTO", "AUTORIZACION", "COMERCIO", "MODO_DE_ENTRADA", "FECHA_FISCAL", "PRODUCTO", "DESCRIPCION_TRANSACCION", "NR_CUOTAS", "ESTADO_TRANSACCION", "COMPROBANTE_FISCAL", "PSP", "ORIGEN_DE_LA_TRANSACCION", "TIPO_PAGAMENTO_CD", "FORMA_PAGAMENTO_CD", "BANDEIRA_CD", "PROCESSO_TRANSACIONAL", "NOMBRE_ADQUIRENTE", "NUM_PULA_CICLOS", "NSU_QR_CODE_ELO", "CODESTABAUTORIZADOR", "VALORCANCELADO", "VALORGORJETA", "MONTO_FORMATEADO"];
+                const values = columnOrder.map(column => fullData[column] === null || fullData[column] === undefined ? '' : fullData[column]);
+                const tabSeparated = values.join('\t');
+                const tempInput = document.createElement('input');
+                tempInput.value = tabSeparated;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('Datos copiados al portapapeles');
+            }
+
+            if (event.key === 'ArrowUp') {
+                moveSelection(-1);
+            } else if (event.key === 'ArrowDown') {
+                moveSelection(1);
+            }
+        });
+    </script>
+</body>
+</html>
