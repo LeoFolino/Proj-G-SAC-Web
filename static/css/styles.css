@@ -9,6 +9,7 @@ h1 {
     color: #E0004D;
 }
 
+/* Ajuste del contenedor principal */
 .container {
     display: flex;
     justify-content: space-between;
@@ -16,33 +17,25 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Ajuste del contenedor de formulario */
 .form-container {
-    max-width: 800px; /* Incrementado para más espacio */
-}
-
-.status-container {
-    max-width: 600px; /* Incrementado para más espacio */
-    text-align: right;
-    white-space: nowrap;
-}
-
-form {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-}
-
-.search-input {
+    max-width: 500px; /* Cambiado a 500px para hacerlo más angosto */
     width: 100%;
-    padding: 8px;
+    margin-right: 20px;
+}
+
+/* Ajuste de los inputs */
+.search-input {
+    width: 100%; /* Mantener el 100% dentro de su contenedor */
+    padding: 10px;
+    font-size: 16px;
     margin-top: 5px;
     box-sizing: border-box;
 }
 
+/* Ajuste del botón */
 button {
+    width: 100%; /* Botón del mismo tamaño que los inputs */
     background-color: #E0004D;
     color: white;
     padding: 10px 20px;
@@ -54,6 +47,39 @@ button {
 button:hover {
     background-color: #D00042;
 }
+
+/* Ajuste del contenedor de estado */
+.status-container {
+    max-width: 300px; /* Más angosto para el contenedor de estado */
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+/* Ajuste de los inputs */
+.search-input {
+    width: 100%; /* Se asegura que el input ocupe el 100% del contenedor */
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+/* Ajuste del botón */
+button {
+    width: 100%; /* Hacer que el botón también ocupe todo el ancho */
+    background-color: #E0004D;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #D00042;
+}
+
 
 #results {
     white-space: pre-wrap;
