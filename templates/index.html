@@ -184,26 +184,43 @@
             }
         }
 
-        document.addEventListener('keydown', function(event) {
-            if ((event.ctrlKey || event.metaKey) && event.key === 'c' && fullData) {
-                const columnOrder = ["FECHA", "CODIGO_TIENDA", "TARJETA", "TID", "NSU", "NSU_HOST", "MONTO", "MONTO_PROPINA", "MONTO_RETIRO", "RED", "TIPO_PRODUCTO", "AUTORIZACION", "COMERCIO", "MODO_DE_ENTRADA", "FECHA_FISCAL", "PRODUCTO", "DESCRIPCION_TRANSACCION", "NR_CUOTAS", "ESTADO_TRANSACCION", "COMPROBANTE_FISCAL", "PSP", "ORIGEN_DE_LA_TRANSACCION", "TIPO_PAGAMENTO_CD", "FORMA_PAGAMENTO_CD", "BANDEIRA_CD", "PROCESSO_TRANSACIONAL", "NOMBRE_ADQUIRENTE", "NUM_PULA_CICLOS", "NSU_QR_CODE_ELO", "CODESTABAUTORIZADOR", "VALORCANCELADO", "VALORGORJETA", "MONTO_FORMATEADO"];
-                const values = columnOrder.map(column => fullData[column] === null || fullData[column] === undefined ? '' : fullData[column]);
-                const tabSeparated = values.join('\t');
-                const tempInput = document.createElement('input');
-                tempInput.value = tabSeparated;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('Datos copiados al portapapeles');
-            }
+        document.addEventListener('keydown', function (event) {
+    /* ── Copiar fila seleccionada con Ctrl/Cmd + C ───────────── */
+    if ((event.ctrlKey || event.metaKey) && event.key === 'c' && fullData) {
+        const columnOrder = [
+            "FECHA", "CODIGO_TIENDA", "TARJETA", "TID", "NSU", "NSU_HOST",
+            "MONTO", "MONTO_PROPINA", "MONTO_RETIRO", "RED", "TIPO_PRODUCTO",
+            "AUTORIZACION", "COMERCIO", "MODO_DE_ENTRADA", "FECHA_FISCAL",
+            "PRODUCTO", "DESCRIPCION_TRANSACCION", "NR_CUOTAS",
+            "ESTADO_TRANSACCION", "COMPROBANTE_FISCAL", "PSP",
+            "ORIGEN_DE_LA_TRANSACCION", "TIPO_PAGAMENTO_CD", "FORMA_PAGAMENTO_CD",
+            "BANDEIRA_CD", "PROCESSO_TRANSACIONAL", "NOMBRE_ADQUIRENTE",
+            "NUM_PULA_CICLOS", "NSU_QR_CODE_ELO", "CODESTABAUTORIZADOR",
+            "VALORCANCELADO", "VALORGORJETA", "MONTO_FORMATEADO"
+        ];
 
-            if (event.key === 'ArrowUp') {
-                moveSelection(-1);
-            } else if (event.key === 'ArrowDown') {
-                moveSelection(1);
-            }
-        });
+        const values = columnOrder.map(col =>
+            (fullData[col] === null || fullData[col] === undefined) ? '' : fullData[col]
+        );
+
+        const tempInput = document.createElement('input');
+        tempInput.value = values.join('\t');
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('Datos copiados al portapapeles');
+    }
+
+    /* ── Navegar filas con ↑ / ↓ (sin scroll) ────────────────── */
+    if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !event.repeat) {
+        event.preventDefault();        // bloquea el scroll de la página
+        event.stopPropagation();       // evita que otro handler lo procese
+
+        const dir = (event.key === 'ArrowUp') ? -1 : 1;
+        moveSelection(dir);
+    }
+});
     </script>
 </body>
 </html>

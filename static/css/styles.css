@@ -37,6 +37,7 @@ label {
 
 .search-input {
     width: 100%;
+    width: 350px;   /* ajustá el número a gusto */
     padding: 8px;
     margin-top: 5px;
     box-sizing: border-box;
